@@ -12,23 +12,21 @@
             class="search-input"
             v-model="searchKey"
             placeholder="请输入搜索书名"
-            @keyup.enter="searchBook"
+            @keyup.enter="doSsearch"
             size="small"
           />
-          <el-button type="primary" size="small" @click="searchBook">
+          <el-button type="primary" size="small" @click="doSsearch">
             查询
           </el-button>
         </el-col>
       </el-row>
     </div>
     <div class="content">
-      
       <p class="notes">
         未做严格检查，希望大家自觉填写可用的下载地址，勿让找书的好友空欢喜一场。
       </p>
       <home-table :tableData="tableData" />
     </div>
-
     <el-dialog
       title="添加书籍"
       v-model="isShowModel"
@@ -53,7 +51,7 @@ import { ref, defineComponent, reactive, toRefs, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import HomeForm from "./components/HomeForm.vue";
 import HomeTable from "./components/HomeTable.vue";
-import {getBookList, addBook} from '/src/api'
+import {getBookList, addBook, searchBook} from '/src/api'
 
 export default defineComponent({
   name: "HelloWorld",
@@ -79,7 +77,6 @@ export default defineComponent({
       const { res, data } = await formRef.value.validate();
       if (!res) return;
       const {status} = await addBook(data)
-      console.log(status);
       if(status === 1000) {
         ElMessage.success("添加成功，感谢您的支持！");
         setBookList()
@@ -90,11 +87,14 @@ export default defineComponent({
       formRef.value.resetFormData();
     }
 
-    function searchBook() {
-     
+    async function doSsearch() {
+      const {status, data} = await searchBook({name: state.searchKey})
+      if(status === 1000) {
+        state.tableData = data
+      }
     }
 
-    return { ...toRefs(state), formRef, doAdd, searchBook };
+    return { ...toRefs(state), formRef, doAdd, doSsearch };
   },
 });
 </script>
