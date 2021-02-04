@@ -26,7 +26,7 @@
       <p class="notes">
         未做严格检查，希望大家自觉填写可用的下载地址，勿让找书的好友空欢喜一场。
       </p>
-      <home-table :list="showData" />
+      <home-table :tableData="tableData" />
     </div>
 
     <el-dialog
@@ -49,38 +49,51 @@
 </template>
 
 <script>
-import { ref, defineComponent } from "vue";
+import { ref, defineComponent, reactive, toRefs, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import HomeForm from "./components/HomeForm.vue";
 import HomeTable from "./components/HomeTable.vue";
+import {getBookList, addBook} from '/src/api'
 
 export default defineComponent({
   name: "HelloWorld",
   components: { HomeForm, HomeTable },
   setup() {
     const formRef = ref(null);
-    const searchKey = ref("");
-    const isShowModel = ref(false);
-    const list = ref([]);
-    const showData = ref([...list.value]);
+    const state = reactive({
+      searchKey: '',
+      isShowModel: false,
+      tableData: [],
+    })
+
+    onMounted(setBookList)
+
+    async function setBookList(){
+      const {status, data} = await getBookList()
+      if(status === 1000) {
+        state.tableData = data
+      }
+    }
 
     async function doAdd() {
-      const { status, data } = await formRef.value.validate();
-      if (!status) return;
-      list.value.push(data);
-      showData.value.push(data);
-      isShowModel.value = false;
-      ElMessage.success("添加成功！感谢您的支持！");
+      const { res, data } = await formRef.value.validate();
+      if (!res) return;
+      const {status} = await addBook(data)
+      if(status === 1000) {
+        ElMessage.success("添加成功，感谢您的支持！");
+        setBookList()
+      } else {
+        ElMessage.warning("添加失败，请重新尝试！");
+      }
+      state.isShowModel = false;
       formRef.value.resetFormData();
     }
 
     function searchBook() {
-      showData.value = list.value.filter((v) =>
-        v.name.includes(searchKey.value)
-      );
+     
     }
 
-    return { searchKey, showData, isShowModel, formRef, doAdd, searchBook };
+    return { ...toRefs(state), formRef, doAdd, searchBook };
   },
 });
 </script>

@@ -1,6 +1,6 @@
 node_modules
-data
 public
+data
 
 .DS_Store
 dist

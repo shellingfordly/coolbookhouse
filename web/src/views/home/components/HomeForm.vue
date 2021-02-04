@@ -19,7 +19,7 @@
     <el-form-item label="解压密码">
       <el-input v-model="formData.gzpsw" placeholder="可不填" />
     </el-form-item>
-    <el-form-item label="提供者">
+    <el-form-item label="贡献者">
       <el-input v-model="formData.user" placeholder="可不填" />
     </el-form-item>
   </el-form>
@@ -63,7 +63,7 @@ export default defineComponent({
     function validate() {
       return new Promise((reslove) => {
         formRef.value.validate((res) => {
-          reslove({ status: res, data: state.formData });
+          reslove({ res, data: state.formData });
         });
       });
     }
