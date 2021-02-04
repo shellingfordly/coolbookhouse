@@ -1,37 +1,49 @@
-const express = require('express'); //express框架模块
-const bodyParser = require('body-parser');//解析,用req.body获取post参数
-const path = require('path'); //系统路径模块
-const mongoose = require("mongoose");
-const app = express();
-const setRoute = require('./action/book')
+const mongoose = require('mongoose')
+const koa = require('koa')
+const fs = require('fs')
+const path = require('path')
+const router = require('koa-router')()
+const cors = require('koa-cors')
+const bodyParser = require('koa-bodyparser')
 
-const hostName = '127.0.0.1'; //ip
-const port = 8080; //端口
+const app = new koa()
+app.use(bodyParser())
+// 跨域设置需要在路由配置之前
+app.use(cors())
 
-app.all('*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
-  res.header("X-Powered-By",' 3.2.1')
-  res.header("Content-Type", "application/json;charset=utf-8");
-  next();
-});
+// 配置路由
+app.use(router.routes()).use(router.allowedMethods())
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+const mockData = {}
 
-setRoute(app)
+// 读取文件夹路径
+const mockPath = path.join(__dirname, 'action')
+// 读取文件夹内的文件名
+const files = fs.readdirSync(mockPath)
 
+files.forEach(item => {
+  Object.assign(mockData, require(path.join(mockPath, item)))
+})
+
+// 配置路由
+for (const key in mockData) {
+  let [method, url] = key.split(' ')
+  method = method.toLowerCase()
+  router[method](url, mockData[key])
+}
+
+
+// 连接数据库
 mongoose.connect('mongodb://localhost:27017/book', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(async () => {
-  console.log("数据库连接成功!")
+  console.log("数据库连接成功")
 
-  app.listen(port, hostName, function () {
-    console.log(`服务器运行在http://${hostName}:${port}!`);
-  });
+  app.listen(8080, () => {
+    console.log("8080端口已开启")
+  })
 
 }).catch(() => {
-  console.log("数据库连接失败!")
+  console.log("数据库连接失败")
 })

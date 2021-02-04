@@ -1,17 +1,9 @@
-import axios from 'axios'
+import http from './http'
 
 export function getBookList(){
-  return new Promise(resolve=>{
-    axios.get('/api/book/get.list.1.0.0').then((res)=>{
-      resolve(res)
-    })
-  })
+  return http('http://localhost:8080/book/get.list.1.0.0')
 }
 
 export function addBook(params){
-  return new Promise(resolve=>{
-    axios.post('/api/book/add.1.0.0', params).then((res)=>{
-      resolve(res)
-    })
-  })
+  return http('http://localhost:8080/book/add.1.0.0', params, 'post') 
 }
