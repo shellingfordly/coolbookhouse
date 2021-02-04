@@ -2,7 +2,7 @@ import axios from 'axios'
 
 export function getBookList(){
   return new Promise(resolve=>{
-    axios.get('/api/book/get.list.1.0.0').then((res)=>{
+    axios.get('http://182.61.19.153:8080/book/get.list.1.0.0').then((res)=>{
       resolve(res)
     })
   })
@@ -10,7 +10,7 @@ export function getBookList(){
 
 export function addBook(params){
   return new Promise(resolve=>{
-    axios.post('/api/book/add.1.0.0', params).then((res)=>{
+    axios.post('http://182.61.19.153:8080/book/add.1.0.0', params).then((res)=>{
       resolve(res)
     })
   })
