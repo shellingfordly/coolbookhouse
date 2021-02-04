@@ -79,6 +79,7 @@ export default defineComponent({
       const { res, data } = await formRef.value.validate();
       if (!res) return;
       const {status} = await addBook(data)
+      console.log(status);
       if(status === 1000) {
         ElMessage.success("添加成功，感谢您的支持！");
         setBookList()
