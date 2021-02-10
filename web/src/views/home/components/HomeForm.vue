@@ -40,7 +40,7 @@
 
 <script>
 import { defineComponent, reactive, ref, toRaw, toRefs, watch } from "vue";
-import { useObj1KeyCopyObj2Val } from "/src/utils/object";
+import { useObj1KeyCopyObj2Val, objCopy } from "/src/utils/object";
 
 function linkValidate(_, value) {
   const reg = /[http|https]:\/\/.+\..+/;
@@ -89,7 +89,6 @@ export default defineComponent({
             toRaw(state.formData),
             toRaw(newFormData)
           );
-          console.log("state.formData", state.formData);
         } else state.formData = getFormData();
       },
       { deep: true, immediate: true }
@@ -97,8 +96,10 @@ export default defineComponent({
 
     function validate() {
       return new Promise((reslove) => {
+        const data = objCopy(state.formData)
+        Reflect.deleteProperty(data, '_id')
         formRef.value.validate((res) => {
-          reslove({ res, data: state.formData });
+          reslove({ res, data });
         });
       });
     }

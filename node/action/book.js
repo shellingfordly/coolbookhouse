@@ -23,7 +23,6 @@ module.exports = {
   "POST /book/search.1.0.0": async cxt => {
     const params = cxt.request.body
     const res = await BookSchema.find()
-    console.log("POST /book/searchs")
     const data = res.filter(book=>book.name.includes(params.name))
     cxt.body = { status: 1000, data }
   },
