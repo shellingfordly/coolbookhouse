@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "serve": "rm -rf ./node_modules/.vite && vite"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -11,10 +12,11 @@
     "vue": "^3.0.4"
   },
   "devDependencies": {
-    "@vue/compiler-sfc": "^3.0.4",
+    "@vitejs/plugin-vue": "^1.1.4",
+    "@vue/compiler-sfc": "^3.0.5",
     "babel-plugin-component": "^1.1.1",
     "sass": "^1.32.6",
     "sass-loader": "^10.1.1",
-    "vite": "^1.0.0-rc.13"
+    "vite": "^2.0.0-bata.65"
   }
 }

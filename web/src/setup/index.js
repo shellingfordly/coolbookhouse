@@ -7,7 +7,9 @@ import {
   ElForm,
   ElFormItem,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElRadio,
+  ElRadioGroup
 } from 'element-plus';
 
 const plugins = [
@@ -19,7 +21,9 @@ const plugins = [
   ElForm,
   ElFormItem,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElRadio,
+  ElRadioGroup
 ]
 
 export default function setup(app) {

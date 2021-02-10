@@ -1,6 +1,8 @@
 <template>
-  <Header />
-  <Home />
+  <div class="app">
+    <Header />
+    <Home />
+  </div>
 </template>
 
 <script>

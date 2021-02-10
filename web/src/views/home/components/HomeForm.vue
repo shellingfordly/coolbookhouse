@@ -11,7 +11,20 @@
       <el-input v-model="formData.name" placeholder="请填写准确的书名" />
     </el-form-item>
     <el-form-item label="链接地址" prop="link">
-      <el-input v-model="formData.link" placeholder="请填写正确的链接" @keyup.enter="$emit('doAdd')" />
+      <el-input
+        v-model="formData.link"
+        placeholder="请填写正确的链接"
+        @keyup.enter="$emit('doAdd')"
+      />
+    </el-form-item>
+
+    <el-form-item label="格式" prop="format">
+      <el-radio-group v-model="formData.format">
+        <el-radio label="mobi">mobi</el-radio>
+        <el-radio label="epub">epub</el-radio>
+        <el-radio label="pdf">pdf</el-radio>
+        <el-radio label="txt">txt</el-radio>
+      </el-radio-group>
     </el-form-item>
     <el-form-item label="提取码">
       <el-input v-model="formData.uppsw" placeholder="可不填" />
@@ -26,7 +39,8 @@
 </template>
 
 <script>
-import { defineComponent, reactive, ref, toRefs } from "vue";
+import { defineComponent, reactive, ref, toRaw, toRefs, watch } from "vue";
+import { useObj1KeyCopyObj2Val } from "/src/utils/object";
 
 function linkValidate(_, value) {
   const reg = /[http|https]:\/\/.+\..+/;
@@ -35,6 +49,7 @@ function linkValidate(_, value) {
 
 const rules = {
   name: [{ required: true, message: "请填写准确的书名", trigger: "blur" }],
+  format: [{ required: true, message: "请选择正确的格式", trigger: "change" }],
   link: [
     {
       required: true,
@@ -47,18 +62,38 @@ const rules = {
 
 function getFormData() {
   return {
+    _id: "",
     name: "",
     link: "",
     uppsw: "",
     gzpsw: "",
     user: "",
+    format: "",
   };
 }
 
 export default defineComponent({
-  setup() {
+  props: {
+    formData: { type: Object },
+    isUpdate: { type: Boolean, default: false },
+  },
+  setup(props) {
     const state = reactive({ formData: getFormData() });
     const formRef = ref(null);
+
+    watch(
+      () => props.formData,
+      (newFormData) => {
+        if (props.isUpdate) {
+          state.formData = useObj1KeyCopyObj2Val(
+            toRaw(state.formData),
+            toRaw(newFormData)
+          );
+          console.log("state.formData", state.formData);
+        } else state.formData = getFormData();
+      },
+      { deep: true, immediate: true }
+    );
 
     function validate() {
       return new Promise((reslove) => {
